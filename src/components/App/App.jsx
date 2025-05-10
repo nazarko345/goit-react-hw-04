@@ -1,51 +1,69 @@
 import css from "./App.module.css";
 
-import initualContacts from "../../contacts.json";
+import SearchBar from "../SearchBar/SearchBar.jsx";
+import ImageGallery from "../ImageGallery/ImageGallery.jsx";
+import Loader from "../Loader/Loader.jsx";
+import ErrorMessage from "../ErrorMessage/ErrorMessage.jsx";
+import { fetchArticles } from "../../articles-api.js";
 
-import ContactForm from "../ContactForm/ContactForm.jsx";
-import SearchBox from "../SearchBox/SearchBox.jsx";
-import ContactList from "../ContactList/ContactList.jsx";
 import { useEffect, useState } from "react";
-import { nanoid } from "nanoid/non-secure";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function App() {
-  const [filter, setFilter] = useState("");
-  const [contacts, setContact] = useState(() => {
-    const savedData = localStorage.getItem("contacts");
-    if (savedData !== null) {
-      return JSON.parse(savedData);
-    }
-    return initualContacts;
-  }
-)
- 
-  const contactAdd = (newContact) => {
-    setContact((prevContacts) => [
-      ...prevContacts,
-      { ...newContact, number: newContact.tel, id: nanoid() },
-    ]);
-  };
+  const [query, setQuery] = useState("");
+  const [articles, setArticles] = useState([]);
+  const [isError, setIsError] = useState(false);
 
-  const contactDelete = (currentId) => {
-    setContact((prevContacts) => {
-      return prevContacts.filter((contact) => contact.id !== currentId);
-    });
-  };
-
-  const filtredContacts = contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  const [loader, setLoader] = useState(false);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    localStorage.setItem("contacts", JSON.stringify(contacts));
-  }, [contacts]);
+    if (query === "") {
+      return;
+    }
+
+    async function loadArticles() {
+      try {
+        setLoader(true);
+        setIsError(false);
+        const data = await fetchArticles(query, page);
+        setArticles((prevPhotos) => {
+          return page === 1 ? data.results : [...prevPhotos, ...data.results];
+        });
+      } catch {
+        setIsError(true);
+        toast.error("An error occured! Please try again later.");
+      } finally {
+        setLoader(false);
+      }
+    }
+
+    loadArticles();
+  }, [query, page]);
+
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    const topic = event.target.elements[0].value.trim();
+    if (!topic) {
+      toast.error("Please enter a search term!");
+      return;
+    }
+
+    setQuery(topic);
+    setPage(1);
+    setArticles([]);
+
+    event.target.reset();
+  }
 
   return (
     <div className={css.app}>
-      <h1>Phonebook</h1>
-      <ContactForm contactAdd={contactAdd} />
-      <SearchBox onFilter={setFilter} value={filter} />
-      <ContactList contactDelete={contactDelete} contacts={filtredContacts} />
+      <SearchBar onSubmit={handleSubmit} />
+      {loader && <Loader />}
+      {articles.length > 0 && <ImageGallery responce={articles} />}
+      {isError && <ErrorMessage />}
+      <Toaster position="top-right" />
     </div>
   );
 }

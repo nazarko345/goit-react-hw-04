@@ -8,8 +8,6 @@
 .app {
   display: flex;
   flex-direction: column;
-  /* gap: 80px; */
-  padding: 40px;
 }
 
 @keyframes logo-spin {

@@ -29,11 +29,10 @@ ul, ol {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(180deg, #764ba2 0%, #667eea 30%, #f4f5ff 100%);
   min-height: 100vh;
-  background-color: #ffffff;
+  color: #333;
 }
 
 p {
