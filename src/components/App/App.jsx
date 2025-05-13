@@ -20,7 +20,7 @@ export default function App() {
   const [page, setPage] = useState(1);
   const [totalArticles, setTotalArticles] = useState(0);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [selectedArt, setSelectedAtr] = useState(null);
+  const [selectedArticle, setSelectedAtrticle] = useState(null);
 
 
   useEffect(() => {
@@ -71,12 +71,12 @@ export default function App() {
 
   function OpenModal(article) {
     setModalIsOpen(true);
-    setSelectedAtr(article);
+    setSelectedAtrticle(article);
   }
 
   function CleseModal() {
     setModalIsOpen(false);
-    setSelectedAtr(null);
+    setSelectedAtrticle(null);
   }
 
   return (
@@ -84,7 +84,7 @@ export default function App() {
       <SearchBar onSubmit={handleSubmit} />
       {loader && <Loader />}
       {articles.length > 0 && (
-        <ImageGallery modalOpening={OpenModal} responce={articles} />
+        <ImageGallery modalOpening={OpenModal} articlesw={articles} />
       )}
       {isError && <ErrorMessage />}
       {articles.length > 0 && articles.length < totalArticles && (
@@ -93,7 +93,7 @@ export default function App() {
       <ImageModal
         isOpen={modalIsOpen}
         isClosed={CleseModal}
-        selectedArt={selectedArt}
+        selectedArticle={selectedArticle}
       />
       <Toaster position="top-right" />
     </div>
