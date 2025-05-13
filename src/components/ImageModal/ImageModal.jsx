@@ -1,53 +1,34 @@
-import css from "./ContactForm.module.css";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
+import css from "./ImageModal.module.css";
+import Modal from "react-modal";
+import { BsXLg } from "react-icons/bs"; 
 
-const defaultValues = {
-  name: "",
-  tel: "",
-};
+Modal.setAppElement("#root");
 
-const ContactsSchema = Yup.object().shape({
-  name: Yup.string()
-    .min(3, "It's too short")
-    .max(30, "It's too long!")
-    .required("Required"),
-  tel: Yup.string()
-    .min(3, "It's too short")
-    .max(30, "It's too long!")
-    .required("Required"),
-});
-
-export default function ContactForm({ contactAdd }) {
+export default function ImageModal({ isOpen, isClosed, selectedArt }) {
   return (
-    <Formik
-      initialValues={defaultValues}
-      onSubmit={(values, actions) => {
-        contactAdd(values);
-        actions.resetForm();
-      }}
-      validationSchema={ContactsSchema}
-    >
-      <Form className={css.form}>
-        <Field
-          className={css.name}
-          type="text"
-          name="name"
-          placeholder="name"
-        />
-        <ErrorMessage className={css.error} name="name" component="span" />
-        <Field
-          className={css.tel}
-          type="tel"
-          name="tel"
-          placeholder="phone number"
-        />
-        <ErrorMessage className={css.error} name="tel" component="span" />
-
-        <button type="submit" className={css.addBtn}>
-          Add contact
-        </button>
-      </Form>
-    </Formik>
+    <Modal className={css.modal} isOpen={isOpen} onRequestClose={isClosed}>
+      {selectedArt && (
+        <>
+          <button onClick={isClosed}>
+            <BsXLg />
+          </button>
+          <img
+            className={css.img}
+            src={selectedArt.urls.regular}
+            alt={selectedArt.alt_description}
+          />
+          <div className={css.miniContainer}>
+            <h4 className={css.description}>
+              {" "}
+              {selectedArt.description ||
+                selectedArt.alt_description ||
+                "No description available"}
+            </h4>
+            <p className={css.likes}>❤️ {selectedArt.likes}</p>
+          </div>
+        </>
+      )}
+    </Modal>
   );
 }
+
