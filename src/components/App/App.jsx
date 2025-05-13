@@ -84,7 +84,7 @@ export default function App() {
       <SearchBar onSubmit={handleSubmit} />
       {loader && <Loader />}
       {articles.length > 0 && (
-        <ImageGallery modalOpening={OpenModal} articlesw={articles} />
+        <ImageGallery modalOpening={OpenModal} articles={articles} />
       )}
       {isError && <ErrorMessage />}
       {articles.length > 0 && articles.length < totalArticles && (
